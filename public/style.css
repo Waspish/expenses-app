@@ -835,3 +835,101 @@ textarea:focus {
 #activeFilters button:hover {
     background: #c0392b;
 }
+
+/* Стили для секции цели накоплений */
+.goal-section {
+    margin: 30px 0;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 4px solid #28a745;
+}
+
+.goal-amount {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.edit-goal-btn {
+    padding: 8px 16px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.edit-goal-btn:hover {
+    background: #0056b3;
+}
+
+.goal-progress {
+    margin-top: 15px;
+}
+
+.progress-text {
+    margin-bottom: 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+.goal-edit-form {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.save-goal-btn {
+    padding: 8px 16px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.cancel-goal-btn {
+    padding: 8px 16px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.save-goal-btn:hover {
+    background: #218838;
+}
+
+.cancel-goal-btn:hover {
+    background: #545b62;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .goal-amount {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .goal-edit-form div {
+        flex-direction: column;
+    }
+
+    .save-goal-btn,
+    .cancel-goal-btn {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+}

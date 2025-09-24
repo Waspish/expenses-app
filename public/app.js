@@ -45,6 +45,18 @@ const customPeriod = document.getElementById("customPeriod");
 const monthFilter = document.getElementById("monthFilter");
 const yearFilter = document.getElementById("yearFilter");
 
+// Элементы DOM для цели накоплений
+const goalAmountDisplay = document.getElementById('goalAmountDisplay');
+const goalAmountText = document.getElementById('goalAmountText');
+const currentSavings = document.getElementById('currentSavings');
+const goalPercentage = document.getElementById('goalPercentage');
+const goalPercentageBar = document.getElementById('goalPercentageBar');
+const editGoalButton = document.getElementById('editGoalButton');
+const goalEditForm = document.getElementById('goalEditForm');
+const newGoalAmount = document.getElementById('newGoalAmount');
+const saveGoalButton = document.getElementById('saveGoalButton');
+const cancelGoalButton = document.getElementById('cancelGoalButton');
+
 // Переменные состояния
 let allExpenses = [];
 let filteredExpenses = [];
@@ -59,6 +71,152 @@ let currentMonthFilter = "";
 let currentYearFilter = "";
 let isAllTime = true;
 
+// Переменные для хранения данных
+let goalAmount = 0;
+let totalSavings = 0;
+
+
+// Функция обновления прогресса
+function updateGoalProgress() {
+    // Рассчитываем процент прогресса
+    let percentage = 0;
+    if (goalAmount > 0 && totalSavings > 0) {
+        percentage = Math.min((totalSavings / goalAmount) * 100, 100);
+    }
+
+    // Обновляем отображение
+    goalAmountDisplay.textContent = formatCurrency(goalAmount);
+    goalAmountText.textContent = formatCurrency(goalAmount, false);
+    currentSavings.textContent = formatCurrency(totalSavings, false);
+
+    // Форматируем процент без лишних нулей
+    goalPercentage.textContent = percentage === 0 ? '0%' : percentage.toFixed(1) + '%';
+    goalPercentageBar.style.width = percentage + '%';
+
+    // Меняем цвет прогресса
+    updateProgressColor(percentage);
+}
+
+// Функция обновления цвета прогресса
+function updateProgressColor(percentage) {
+    if (percentage >= 100) {
+        goalPercentageBar.style.background = 'linear-gradient(90deg, #28a745, #20c997)';
+        goalPercentage.style.color = '#28a745';
+    } else if (percentage >= 50) {
+        goalPercentageBar.style.background = 'linear-gradient(90deg, #ffc107, #fd7e14)';
+        goalPercentage.style.color = '#ffc107';
+    } else {
+        goalPercentageBar.style.background = 'linear-gradient(90deg, #dc3545, #fd7e14)';
+        goalPercentage.style.color = '#dc3545';
+    }
+}
+
+// Функция форматирования валюты
+function formatCurrency(amount, showCurrency = true) {
+    const formatted = new Intl.NumberFormat('ru-RU').format(amount);
+    return showCurrency ? formatted + ' руб' : formatted;
+}
+
+// Функция сохранения цели в localStorage
+function saveGoalToStorage() {
+    localStorage.setItem('savingsGoal', goalAmount.toString());
+}
+
+// Функция загрузки цели из localStorage
+function loadGoalFromStorage() {
+    const savedGoal = localStorage.getItem('savingsGoal');
+    return savedGoal ? parseInt(savedGoal) : 100000; // По умолчанию 100,000 руб
+}
+
+// Функция для расчета общей суммы накоплений из баланса
+function calculateTotalSavingsFromBalance() {
+    let totalBalance = 0;
+
+    // Суммируем БАЛАНСЫ Андрея и Насти (а не накопления)
+    const andreyBalanceValue = parseFloat(andreyBalance.textContent) || 0;
+    const nastyaBalanceValue = parseFloat(nastyaBalance.textContent) || 0;
+
+    totalBalance = andreyBalanceValue + nastyaBalanceValue;
+
+    console.log('Общая сумма балансов:', totalBalance, 'руб');
+    console.log('Баланс Андрея:', andreyBalanceValue, 'руб');
+    console.log('Баланс Насти:', nastyaBalanceValue, 'руб');
+
+    return totalBalance;
+}
+
+// Обработчики событий для цели накоплений
+function setupGoalEventListeners() {
+    if (editGoalButton) {
+        editGoalButton.addEventListener('click', function() {
+            goalEditForm.style.display = 'block';
+            newGoalAmount.value = goalAmount;
+            newGoalAmount.focus();
+        });
+    }
+
+    if (saveGoalButton) {
+        saveGoalButton.addEventListener('click', function() {
+            const newAmount = parseInt(newGoalAmount.value) || 0;
+            if (newAmount >= 0) {
+                goalAmount = newAmount;
+                saveGoalToStorage();
+                updateGoalProgress();
+                goalEditForm.style.display = 'none';
+            } else {
+                alert('Пожалуйста, введите корректную сумму');
+            }
+        });
+    }
+
+    if (cancelGoalButton) {
+        cancelGoalButton.addEventListener('click', function() {
+            goalEditForm.style.display = 'none';
+        });
+    }
+
+    if (newGoalAmount) {
+        newGoalAmount.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                saveGoalButton.click();
+            }
+        });
+    }
+}
+
+// Функция инициализации цели накоплений
+function initGoalSystem() {
+    // Загрузка цели из localStorage
+    goalAmount = loadGoalFromStorage();
+
+    // Расчет общей суммы накоплений из баланса
+    totalSavings = calculateTotalSavingsFromBalance();
+
+    updateGoalProgress();
+
+    // Настраиваем обработчики событий
+    setupGoalEventListeners();
+}
+
+// Функция для обновления общей суммы накоплений (вызывается при изменении баланса)
+function updateTotalSavings(newTotal) {
+    totalSavings = newTotal;
+    updateGoalProgress();
+}
+
+// Функция для принудительного пересчета накоплений
+function recalculateSavings() {
+    totalSavings = calculateTotalSavingsFromBalance();
+    updateGoalProgress();
+    return totalSavings;
+}
+
+// Модифицируем функцию updateBalanceUI для обновления цели накоплений
+const originalUpdateBalanceUI = updateBalanceUI;
+updateBalanceUI = function() {
+    originalUpdateBalanceUI();
+    recalculateSavings();
+};
 // Инициализация приложения
 async function initApp() {
   // Определение iOS устройства
@@ -87,6 +245,40 @@ async function initApp() {
   setupSavingsEventListeners();
   setupPeriodFilterListeners(); // Новый обработчик
 }
+
+// Обновляем функцию initApp
+const originalInitApp = initApp;
+initApp = async function() {
+    await originalInitApp();
+
+    // Инициализируем систему цели накоплений после загрузки основного приложения
+    setTimeout(() => {
+        initGoalSystem();
+    }, 100);
+};
+
+// Наблюдаем за изменениями на странице (если статистика обновляется динамически)
+const observer = new MutationObserver(function() {
+    setTimeout(() => {
+        recalculateSavings();
+    }, 100);
+});
+
+// Запускаем наблюдение после загрузки страницы
+window.addEventListener('load', function() {
+    const statsContainer = document.querySelector('.balance-section, .statistics');
+    if (statsContainer) {
+        observer.observe(statsContainer, {
+            childList: true,
+            subtree: true,
+            characterData: true
+        });
+    }
+});
+
+// Делаем функции глобальными для отладки
+window.recalculateSavings = recalculateSavings;
+window.updateTotalSavings = updateTotalSavings;
 
 // Добавьте функцию setupEventListeners (если её нет)
 function setupEventListeners() {

@@ -156,7 +156,34 @@
             </div>
           </div>
         </div>
+        <div class="goal-section">
+            <h2>Цель накоплений</h2>
+            <div class="goal-amount">
+                <span>Цель: <span id="goalAmountDisplay">0 руб</span></span>
+                <button class="edit-goal-btn" id="editGoalButton">Изменить цель</button>
+            </div>
 
+            <div class="goal-progress">
+                <div class="progress-text">
+                    Накоплено: <span id="currentSavings">0</span> из <span id="goalAmountText">0</span> руб
+                </div>
+                <div class="stat-percentage" id="goalPercentage">0%</div>
+                <div class="percentage-bar">
+                    <div class="percentage-fill" id="goalPercentageBar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="goal-edit-form" id="goalEditForm" style="display: none; margin-top: 15px;">
+                <div class="form-group">
+                    <label for="newGoalAmount">Новая цель (руб):</label>
+                    <input type="number" id="newGoalAmount" min="0" step="1000" value="100000">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="save-goal-btn" id="saveGoalButton">Сохранить</button>
+                    <button class="cancel-goal-btn" id="cancelGoalButton">Отмена</button>
+                </div>
+            </div>
+        </div>
       <div class="balance-section">
       <h2>Текущий баланс</h2>
       <div class="balance-cards">
