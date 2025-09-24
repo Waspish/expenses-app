@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Учет расходов - Андрей & Настя</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>💰 Учет совместных расходов</h1>
+        <p>Андрей & Настя</p>
+      </header>
+
+      <div class="person-selector">
+        <button class="person-btn andrey-btn" id="andreyBtn">Андрей</button>
+        <button class="person-btn nastya-btn" id="nastyaBtn">Настя</button>
+      </div>
+
+      <div class="expense-form" id="expenseForm">
+        <h2>Добавить расход</h2>
+        <form id="addExpenseForm">
+          <input type="hidden" id="selectedPerson" name="person" value="" />
+
+          <div class="form-group">
+            <label for="amount">Сумма (руб):</label>
+            <input
+              type="number"
+              id="amount"
+              name="amount"
+              step="0.01"
+              min="0"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="description">Описание:</label>
+            <input
+              type="text"
+              id="description"
+              name="description"
+              placeholder="Что купили?"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="category">Категория:</label>
+            <select id="category" name="category">
+              <option value="">Выберите категорию</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Фотография чека или покупки:</label>
+            <div class="file-upload">
+              <label for="image" class="file-upload-label">
+                📁 Выберите фото из галереи
+              </label>
+              <input type="file" id="image" name="image" accept="image/*" />
+            </div>
+            <div
+              id="iosHint"
+              style="
+                display: none;
+                color: #666;
+                font-size: 12px;
+                margin-top: 5px;
+              "
+            >
+              На iOS: в правом верхнем углу выберите "Фото" или "Библиотека"
+            </div>
+          </div>
+
+          <div class="image-preview" id="imagePreview"></div>
+
+          <button type="submit" class="btn">Добавить расход</button>
+        </form>
+      </div>
+
+        <div class="filters">
+            <h2>Фильтры</h2>
+
+            <div class="filter-group">
+                <label for="categoryFilter">Категория:</label>
+                <select id="categoryFilter">
+                    <option value="">Все категории</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="periodFilter">Период:</label>
+                <div class="period-filter" id="periodFilter">
+                    <div class="checkbox-container">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="allTimeCheckbox" checked>
+                            <span class="checkmark"></span>
+                            <span class="checkbox-text">Все время</span>
+                        </label>
+                    </div>
+
+                    <div id="customPeriod" style="display: none; margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <select id="monthFilter" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option value="">Все месяцы</option>
+                                <option value="01">Январь</option>
+                                <option value="02">Февраль</option>
+                                <option value="03">Март</option>
+                                <option value="04">Апрель</option>
+                                <option value="05">Май</option>
+                                <option value="06">Июнь</option>
+                                <option value="07">Июль</option>
+                                <option value="08">Август</option>
+                                <option value="09">Сентябрь</option>
+                                <option value="10">Октябрь</option>
+                                <option value="11">Ноябрь</option>
+                                <option value="12">Декабрь</option>
+                            </select>
+
+                            <select id="yearFilter" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option value="">Все годы</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="activeFilters" style="display: none;">
+            <strong>Активные фильтры:</strong>
+            <span id="filterText"></span>
+            <button onclick="clearAllFilters()">Сбросить</button>
+        </div>
+        <div class="statistics">
+          <h2>Статистика расходов</h2>
+          <div class="stat-cards">
+            <div class="stat-card andrey-stat">
+              <h3>Андрей</h3>
+              <div class="stat-amount" id="andreyTotal">0 руб</div>
+              <div class="stat-percentage" id="andreyPercentage">0%</div>
+              <div class="percentage-bar">
+                <div class="percentage-fill andrey-percentage" id="andreyPercentageBar" style="width: 0%"></div>
+              </div>
+              <div id="andreyCount">0 расходов</div>
+            </div>
+
+            <div class="stat-card nastya-stat">
+              <h3>Настя</h3>
+              <div class="stat-amount" id="nastyaTotal">0 руб</div>
+              <div class="stat-percentage" id="nastyaPercentage">0%</div>
+              <div class="percentage-bar">
+                <div class="percentage-fill nastya-percentage" id="nastyaPercentageBar" style="width: 0%"></div>
+              </div>
+              <div id="nastyaCount">0 расходов</div>
+            </div>
+          </div>
+        </div>
+
+      <div class="balance-section">
+      <h2>Текущий баланс</h2>
+      <div class="balance-cards">
+        <div class="balance-card andrey-balance">
+          <h3>Андрей</h3>
+          <div class="balance-amount" id="andreyBalance">0.00 руб</div>
+          <div class="balance-details">
+            <span>Накопления: <span id="andreySavings">0</span> руб</span>
+            <span>Расходы: <span id="andreyExpenses">0</span> руб</span>
+          </div>
+        </div>
+
+        <div class="balance-card nastya-balance">
+          <h3>Настя</h3>
+          <div class="balance-amount" id="nastyaBalance">0.00 руб</div>
+          <div class="balance-details">
+            <span>Накопления: <span id="nastyaSavings">0</span> руб</span>
+            <span>Расходы: <span id="nastyaExpenses">0</span> руб</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="savings-form">
+      <h2>Добавить накопления</h2>
+      <form id="addSavingsForm">
+        <input type="hidden" id="savingsSelectedPerson" name="person" value="" />
+
+        <div class="form-group">
+          <label for="savingsAmount">Сумма (руб):</label>
+          <input type="number" id="savingsAmount" name="amount" step="0.01" min="0" required />
+        </div>
+
+        <div class="form-group">
+          <label for="savingsDescription">Описание:</label>
+          <input type="text" id="savingsDescription" name="description" placeholder="Откуда деньги?" />
+        </div>
+
+        <button type="submit" class="btn">Добавить накопления</button>
+      </form>
+    </div>
+
+    <div class="savings-history">
+      <h2>История накоплений</h2>
+      <div id="savingsContainer"></div>
+      <button id="loadMoreSavingsBtn" class="btn load-more">Показать ещё</button>
+    </div>
+
+      <div class="expenses-list">
+        <h2>История расходов</h2>
+        <div id="expensesContainer"></div>
+        <button id="loadMoreBtn" class="btn load-more">Показать ещё</button>
+      </div>
+    </div>
+
+    <div class="modal" id="imageModal">
+      <div class="close-modal" id="closeModal">×</div>
+      <div class="modal-content">
+        <img id="modalImage" src="" alt="Увеличенное изображение" />
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
