@@ -126,7 +126,6 @@ app.get("/api/expenses", (req, res) => {
 
   query += " ORDER BY date DESC";
 
-  console.log("Expenses query:", query, "Params:", params);
 
   db.all(query, params, (err, rows) => {
     if (err) {
@@ -205,7 +204,6 @@ app.get("/api/balance", (req, res) => {
       }
     });
 
-    console.log("Balance data:", balance);
     res.json(balance);
   });
 });
@@ -254,7 +252,6 @@ app.get("/api/statistics", (req, res) => {
 
   query += " GROUP BY person";
 
-  console.log("Statistics query:", query, "Params:", params);
 
   db.all(query, params, (err, rows) => {
     if (err) {

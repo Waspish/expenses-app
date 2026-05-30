@@ -495,12 +495,13 @@ function createSavingElement(saving) {
     minute: "2-digit"
   });
 
+  amount_to_add = parseFloat(saving.amount).toFixed(2)
   div.innerHTML = `
     <div class="savings-info">
       <div class="savings-person ${saving.person === "Андрей" ? "andrey-person" : "nastya-person"}">
         ${saving.person} • ${date}
       </div>
-      <div class="savings-amount">+${parseFloat(saving.amount).toFixed(2)} руб</div>
+      <div class="savings-amount">${amount_to_add >= 0 ? "+"+amount_to_add:amount_to_add}</div>
       ${saving.description ? `<div class="savings-description">${saving.description}</div>` : ""}
     </div>
     <div class="savings-actions">
